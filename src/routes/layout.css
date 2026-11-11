@@ -1,0 +1,282 @@
+@import 'tailwindcss';
+
+@theme {
+	--font-display: 'Unbounded Variable', 'Arial Black', sans-serif;
+	--font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+	--color-ink: #0f0e0d;
+	--color-coal: #171615;
+	--color-graphite: #201f1d;
+	--color-smoke: #2b2927;
+	--color-bone: #ecebe7;
+	--color-paper: #f5f4f1;
+	--color-stone: #d9d6d0;
+	--color-mute: #aca69f;
+	--color-sand: #b8957f;
+	--color-sand-light: #cfb09b;
+	--color-sand-dark: #8f6f5b;
+
+	--radius-card: 1.25rem;
+	--radius-shell: 2.25rem;
+
+	--ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+	--ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
+
+	--animate-marquee: marquee 40s linear infinite;
+	--animate-kenburns: kenburns 14s ease-in-out infinite alternate;
+
+	@keyframes marquee {
+		to {
+			transform: translateX(-50%);
+		}
+	}
+	@keyframes kenburns {
+		from {
+			transform: scale(1.02) translate3d(0, 0, 0);
+		}
+		to {
+			transform: scale(1.14) translate3d(-3%, -2%, 0);
+		}
+	}
+}
+
+@layer base {
+	html {
+		background: var(--color-ink);
+		color: var(--color-bone);
+		-webkit-text-size-adjust: 100%;
+		scroll-padding-top: 6rem;
+	}
+	html:not(.lenis) {
+		scroll-behavior: smooth;
+	}
+	body {
+		font-family: var(--font-sans);
+		font-feature-settings: 'cv11', 'ss01';
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		text-rendering: optimizeLegibility;
+	}
+	::selection {
+		background: var(--color-sand);
+		color: var(--color-ink);
+	}
+	:focus-visible {
+		outline: 2px solid var(--color-sand);
+		outline-offset: 3px;
+	}
+	button {
+		cursor: pointer;
+	}
+	img {
+		user-select: none;
+	}
+}
+
+@layer components {
+	.container-x {
+		width: 100%;
+		max-width: 88rem;
+		margin-inline: auto;
+		padding-inline: 1rem;
+	}
+	@media (min-width: 640px) {
+		.container-x {
+			padding-inline: 1.5rem;
+		}
+	}
+	@media (min-width: 1024px) {
+		.container-x {
+			padding-inline: 2.5rem;
+		}
+	}
+
+	/* Заголовок в стиле референса: широкий гротеск, верхний регистр */
+	.h-display {
+		font-family: var(--font-display);
+		font-weight: 700;
+		text-transform: uppercase;
+		line-height: 0.98;
+		letter-spacing: -0.02em;
+		font-size: clamp(1.75rem, 1.1rem + 2.3vw, 3.4rem);
+		text-wrap: balance;
+	}
+	.h-display .lc {
+		text-transform: lowercase;
+	}
+
+	.eyebrow {
+		font-size: 0.75rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		font-weight: 500;
+	}
+	.eyebrow::before {
+		content: '[';
+	}
+	.eyebrow::after {
+		content: ']';
+	}
+
+	.btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.6rem;
+		height: 3.25rem;
+		padding-inline: 1.75rem;
+		border-radius: 0.75rem;
+		font-size: 0.9375rem;
+		font-weight: 500;
+		transition:
+			background-color 0.3s,
+			color 0.3s,
+			transform 0.3s var(--ease-out-expo),
+			box-shadow 0.3s;
+		white-space: nowrap;
+	}
+	.btn:active {
+		transform: scale(0.97);
+	}
+	.btn-sand {
+		background: var(--color-sand);
+		color: var(--color-ink);
+	}
+	.btn-sand:hover {
+		background: var(--color-sand-light);
+		box-shadow: 0 10px 40px -10px rgb(184 149 127 / 0.6);
+	}
+	.btn-dark {
+		background: var(--color-ink);
+		color: var(--color-bone);
+	}
+	.btn-dark:hover {
+		background: var(--color-smoke);
+	}
+	.btn-ghost {
+		border: 1px solid rgb(236 235 231 / 0.25);
+		color: var(--color-bone);
+	}
+	.btn-ghost:hover {
+		background: rgb(236 235 231 / 0.08);
+		border-color: rgb(236 235 231 / 0.45);
+	}
+
+	/* Скруглённый «контейнер-оболочка» секции, как в референсе */
+	.shell {
+		position: relative;
+		border-radius: var(--radius-shell);
+	}
+	@media (max-width: 639px) {
+		.shell {
+			border-radius: 1.5rem;
+		}
+	}
+
+	.field {
+		width: 100%;
+		height: 3.25rem;
+		border-radius: 0.75rem;
+		padding-inline: 1rem;
+		font-size: 1rem;
+		transition:
+			border-color 0.2s,
+			background-color 0.2s;
+		outline: none;
+	}
+	.field-dark {
+		background: var(--color-smoke);
+		border: 1px solid transparent;
+		color: var(--color-bone);
+	}
+	.field-dark::placeholder {
+		color: var(--color-mute);
+	}
+	.field-dark:focus {
+		border-color: var(--color-sand);
+	}
+	.field-light {
+		background: #fff;
+		border: 1px solid var(--color-stone);
+		color: var(--color-ink);
+	}
+	.field-light::placeholder {
+		color: #8a857e;
+	}
+	.field-light:focus {
+		border-color: var(--color-sand-dark);
+	}
+}
+
+/* ——— Появление блоков при скролле ——— */
+html.js [data-reveal] {
+	opacity: 0;
+	transform: translate3d(0, 2.5rem, 0);
+	transition:
+		opacity 1s var(--ease-out-expo),
+		transform 1.2s var(--ease-out-expo);
+	transition-delay: var(--d, 0ms);
+	will-change: opacity, transform;
+}
+html.js [data-reveal='fade'] {
+	transform: none;
+}
+html.js [data-reveal='scale'] {
+	transform: scale(0.94);
+}
+html.js [data-reveal].in {
+	opacity: 1;
+	transform: none;
+}
+
+/* Заголовки раскрываются построчно из-под маски */
+html.js [data-split] .line {
+	display: block;
+	overflow: hidden;
+	padding-bottom: 0.08em;
+	margin-bottom: -0.08em;
+}
+html.js [data-split] .line > span {
+	display: block;
+	transform: translate3d(0, 105%, 0);
+	transition: transform 1.1s var(--ease-out-expo);
+	transition-delay: calc(var(--i, 0) * 90ms + var(--d, 0ms));
+}
+html.js [data-split].in .line > span {
+	transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html.js [data-reveal],
+	html.js [data-split] .line > span {
+		opacity: 1 !important;
+		transform: none !important;
+		transition: none !important;
+	}
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+	}
+}
+
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+.no-scrollbar {
+	scrollbar-width: none;
+}
+
+/* Бесконечные анимации не крутятся вне экрана (экономия CPU/GPU и батареи) */
+[data-anim-scope]:not([data-inview]),
+[data-anim-scope]:not([data-inview]) * {
+	animation-play-state: paused !important;
+}
+
+/* Блоки ниже первого экрана: браузер пропускает их раскладку/отрисовку, пока они не близко к вьюпорту.
+   `auto` в contain-intrinsic-size запоминает реальную высоту после первого показа. */
+.cv {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 1100px;
+}
