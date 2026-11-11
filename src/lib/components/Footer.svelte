@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { nav, site } from '#lib/config.ts';
+	import { author, nav, site } from '#lib/config.ts';
 	import Logo from './Logo.svelte';
 
 	let { home = true }: { home?: boolean } = $props();
@@ -47,14 +47,30 @@
 		<div class="flex flex-col gap-3 py-6 text-xs text-bone/60 sm:flex-row sm:items-center sm:justify-between">
 			<p>© {year} {site.name}. Все права защищены.</p>
 			<a href="/privacy" class="underline-offset-4 hover:text-bone hover:underline">Политика конфиденциальности</a>
-			<p>Изображения на сайте — 3D-визуализации студии</p>
+			<p>
+				Сделал
+				<a href={author.href} target="_blank" rel="noopener" class="text-bone underline decoration-sand underline-offset-4 transition-colors hover:text-sand"
+					>{author.name}</a
+				>
+			</p>
 		</div>
 	</div>
 
 	<p
-		class="pointer-events-none select-none whitespace-nowrap text-center font-display text-[17vw] font-bold uppercase leading-[0.75] tracking-[-0.05em] text-transparent [background:linear-gradient(180deg,rgb(236_235_231/0.16),rgb(236_235_231/0.01))] [-webkit-background-clip:text] [background-clip:text]"
+		class="wordmark pointer-events-none select-none whitespace-nowrap text-center font-display text-[17vw] font-bold uppercase leading-[0.75] tracking-[-0.05em]"
 		aria-hidden="true"
 	>
 		Lumen
 	</p>
 </footer>
+
+<style>
+	/* Градиент, вырезанный по буквам. Свойства заданы по отдельности: сокращение `background:`
+	   сбрасывает background-clip, и тогда вместо букв рисуется градиентный прямоугольник. */
+	.wordmark {
+		background-image: linear-gradient(180deg, rgb(236 235 231 / 0.16), rgb(236 235 231 / 0.01));
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+</style>

@@ -108,7 +108,7 @@
 <style>
 	.hero-letter {
 		display: inline-block;
-		background: linear-gradient(180deg, #fff 30%, rgb(255 255 255 / 0.55) 68%, rgb(255 255 255 / 0.05) 100%);
+		background-image: linear-gradient(180deg, #fff 30%, rgb(255 255 255 / 0.55) 68%, rgb(255 255 255 / 0.05) 100%);
 		-webkit-background-clip: text;
 		background-clip: text;
 		color: transparent;

@@ -4,6 +4,7 @@
 	import { cubicOut } from 'svelte/easing';
 	import { categories, projects, type Category, type Project } from '#lib/data.ts';
 	import { reveal } from '#lib/actions/reveal.ts';
+	import { tgLink } from '#lib/config.ts';
 	import Heading from './Heading.svelte';
 	import Icon from './Icon.svelte';
 	import ProjectModal from './ProjectModal.svelte';
@@ -102,7 +103,15 @@
 				<p class="font-display text-xl font-bold uppercase leading-none tracking-tight sm:text-3xl">Есть свой проект?</p>
 				<p class="mt-2 max-w-md text-sm text-ink/85">Пришлите план — оценим стоимость и сроки за 15 минут в рабочее время.</p>
 			</div>
-			<a href="#contacts" class="btn btn-dark w-full sm:w-auto">Отправить план</a>
+			<a
+				href={tgLink('Здравствуйте! Хочу прислать план на оценку.')}
+				target="_blank"
+				rel="noopener"
+				class="btn btn-dark w-full sm:w-auto"
+				style="--tg-cut: var(--color-ink)"
+			>
+				<Icon name="telegram" class="size-[18px]" /> Отправить план
+			</a>
 		</div>
 
 		<BeforeAfter />

@@ -3,7 +3,8 @@
 	import { fade, fly } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { categories, type Project } from '#lib/data.ts';
-	import { lockScroll, scrollToId, leadPrefill } from '#lib/scroll.svelte.ts';
+	import { lockScroll } from '#lib/scroll.svelte.ts';
+	import { tgLink } from '#lib/config.ts';
 	import Icon from './Icon.svelte';
 
 	interface Props {
@@ -29,11 +30,7 @@
 		if (e.key === 'ArrowLeft') go(-1);
 	}
 
-	function order() {
-		leadPrefill.topic = `Хочу визуализацию как в проекте «${project.title}»`;
-		onclose();
-		requestAnimationFrame(() => scrollToId('#contacts'));
-	}
+	const orderHref = $derived(tgLink(`Здравствуйте! Хочу визуализацию как в проекте «${project.title}».`));
 
 	const details = $derived([
 		{ k: 'Тип', v: categories.find((c) => c.id === project.category)?.label },
@@ -93,7 +90,7 @@
 						</div>
 					{/each}
 				</dl>
-				<button type="button" class="btn btn-sand mt-8 w-full lg:mt-auto" onclick={order}>Хочу так же</button>
+				<a href={orderHref} target="_blank" rel="noopener" class="btn btn-sand mt-8 w-full lg:mt-auto">Хочу так же</a>
 			</div>
 
 			<button

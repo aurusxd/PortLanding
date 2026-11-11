@@ -72,6 +72,3 @@ export function handleAnchorClicks(e: MouseEvent) {
 	scrollToId(url.hash);
 	history.replaceState(history.state, '', url.hash);
 }
-
-/** Выбранный тариф/расчёт, который подставляется в форму контактов. */
-export const leadPrefill = $state({ topic: '' });

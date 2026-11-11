@@ -1,15 +1,9 @@
 <script lang="ts">
 	import { plans } from '#lib/data.ts';
-	import { leadPrefill, scrollToId } from '#lib/scroll.svelte.ts';
+	import { tgLink } from '#lib/config.ts';
 	import { reveal } from '#lib/actions/reveal.ts';
 	import Heading from './Heading.svelte';
 	import Icon from './Icon.svelte';
-
-	function choose(e: MouseEvent, name: string) {
-		e.preventDefault();
-		leadPrefill.topic = `Интересует тариф «${name}»`;
-		scrollToId('#contacts');
-	}
 </script>
 
 <section id="pricing" class="cv relative bg-ink pb-20 sm:pb-28" aria-labelledby="pricing-title">
@@ -49,7 +43,12 @@
 							</li>
 						{/each}
 					</ul>
-					<a href="#contacts" onclick={(e) => choose(e, p.name)} class="btn mt-auto w-full {p.featured ? 'btn-dark' : 'btn-ghost'}">
+					<a
+						href={tgLink(`Здравствуйте! Интересует тариф «${p.name}» (${p.price} ${p.unit}).`)}
+						target="_blank"
+						rel="noopener"
+						class="btn mt-auto w-full {p.featured ? 'btn-dark' : 'btn-ghost'}"
+					>
 						Выбрать тариф
 					</a>
 				</article>

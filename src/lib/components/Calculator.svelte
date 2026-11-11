@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { Tween } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
-	import { fade, fly } from 'svelte/transition';
 	import kitchen from '#lib/assets/img/kitchen-1.jpg?enhanced&w=1800;1280;860;560';
 	import { roomTypes, urgencies, estimate, rub, AREA_MIN, AREA_MAX } from '#lib/pricing.ts';
-	import { formatPhone, isPhoneValid, sendLead } from '#lib/lead.ts';
+	import { site, tgLink } from '#lib/config.ts';
 	import { reveal } from '#lib/actions/reveal.ts';
 	import Heading from './Heading.svelte';
 	import Icon from './Icon.svelte';
@@ -13,41 +12,24 @@
 	let area = $state(24);
 	let urgency = $state<string>('standard');
 
-	let name = $state('');
-	let phone = $state('');
-	let website = $state(''); // honeypot
-	let status = $state<'idle' | 'sending' | 'done' | 'error'>('idle');
-	let error = $state('');
-	let touched = $state(false);
-	const startedAt = Date.now();
-
 	const result = $derived(estimate(room, area, urgency)!);
 	const price = new Tween(0, { duration: 700, easing: cubicOut });
 	$effect(() => {
 		price.target = result.price;
 	});
 
-	const phoneOk = $derived(isPhoneValid(phone));
 	const fill = $derived(((result.area - AREA_MIN) / (AREA_MAX - AREA_MIN)) * 100);
 
-	async function submit(e: SubmitEvent) {
-		e.preventDefault();
-		touched = true;
-		if (!name.trim() || !phoneOk) return;
-		status = 'sending';
-		const fd = new FormData();
-		fd.set('kind', 'calc');
-		fd.set('name', name);
-		fd.set('phone', phone);
-		fd.set('room', room);
-		fd.set('area', String(area));
-		fd.set('urgency', urgency);
-		fd.set('website', website);
-		fd.set('t', String(Date.now() - startedAt));
-		const r = await sendLead(fd);
-		if (r.ok) status = 'done';
-		else ((status = 'error'), (error = r.error));
-	}
+	// Данные на сайте не собираем: расчёт уходит готовым сообщением в Telegram
+	const message = $derived(
+		[
+			'Здравствуйте! Посчитал на сайте визуализацию:',
+			`— ${result.room.label}, ${result.area} м²`,
+			`— срочность: ${result.urgency.label.toLowerCase()} (${result.urgency.days})`,
+			`— ориентир: ${rub(result.price)}`,
+			'Хочу обсудить проект.'
+		].join('\n')
+	);
 </script>
 
 <section id="calculator" class="cv relative bg-ink py-20 sm:py-28" aria-labelledby="calc-title">
@@ -83,7 +65,7 @@
 					</div>
 				</div>
 
-				<form class="flex flex-col gap-3" onsubmit={submit} novalidate>
+				<div class="flex flex-col gap-3">
 					<!-- 1. Тип -->
 					<fieldset class="rounded-[var(--radius-card)] bg-graphite p-5 sm:p-6" use:reveal={50}>
 						<legend class="float-left mb-4 w-full text-[15px] font-medium">1. Тип помещения</legend>
@@ -162,61 +144,18 @@
 							<p class="text-right text-xs text-bone/60">≈ {result.views} ракурсов<br />{result.urgency.days}</p>
 						</div>
 
-						{#if status === 'done'}
-							<div class="flex items-center gap-4 py-2 lg:py-0" in:fly={{ y: 10 }}>
-								<span class="grid size-12 shrink-0 place-items-center rounded-full bg-sand text-ink"><Icon name="check" /></span>
-								<div>
-									<p class="font-medium">Расчёт отправлен</p>
-									<p class="text-sm text-bone/60">Менеджер свяжется с вами в течение 15 минут в рабочее время.</p>
-								</div>
-							</div>
-						{:else}
-							<p class="mb-4 mt-5 text-[15px] font-medium lg:mt-0">4. Куда прислать точный расчёт?</p>
-							<div class="grid gap-2 sm:grid-cols-2">
-								<div>
-									<input
-										bind:value={name}
-										name="name"
-										autocomplete="name"
-										placeholder="Имя"
-										class="field field-dark"
-										aria-label="Имя"
-										aria-invalid={touched && !name.trim()}
-									/>
-								</div>
-								<div>
-									<input
-										value={phone}
-										oninput={(e) => (phone = e.currentTarget.value = formatPhone(e.currentTarget.value))}
-										name="phone"
-										type="tel"
-										inputmode="tel"
-										autocomplete="tel"
-										placeholder="+7 (999) 999-99-99"
-										class="field field-dark"
-										aria-label="Телефон"
-										aria-invalid={touched && !phoneOk}
-									/>
-								</div>
-							</div>
-							<input bind:value={website} name="website" tabindex="-1" autocomplete="off" class="absolute -left-[9999px] h-0 w-0 opacity-0" aria-hidden="true" />
-							{#if touched && (!name.trim() || !phoneOk)}
-								<p class="mt-2 text-sm text-red-300" transition:fade>Укажите имя и телефон полностью.</p>
-							{/if}
-							{#if status === 'error'}
-								<p class="mt-2 text-sm text-red-300" role="alert">{error}</p>
-							{/if}
-							<div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-								<button type="submit" class="btn btn-sand sm:min-w-56" disabled={status === 'sending'}>
-									{status === 'sending' ? 'Отправляем…' : 'Получить точный расчёт'}
-								</button>
-								<p class="text-xs leading-relaxed text-bone/60">
-									Нажимая кнопку, вы соглашаетесь с <a href="/privacy" class="underline underline-offset-2 hover:text-bone">политикой конфиденциальности</a>
-								</p>
-							</div>
-						{/if}
+						<p class="mt-5 text-[15px] font-medium lg:mt-0">4. Обсудим точную цену</p>
+						<p class="mt-1.5 text-sm leading-relaxed text-bone/60">
+							Отправьте расчёт в Telegram — сообщение уже набрано. Посмотрим план и назовём точную стоимость.
+						</p>
+						<div class="mt-4 flex flex-col gap-2 sm:flex-row">
+							<a href={tgLink(message)} target="_blank" rel="noopener" class="btn btn-sand sm:min-w-64" style="--tg-cut: var(--color-sand)">
+								<Icon name="telegram" class="size-[18px]" /> Отправить расчёт в Telegram
+							</a>
+							<a href={site.phoneHref} class="btn btn-ghost">Позвонить</a>
+						</div>
 					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	</div>
